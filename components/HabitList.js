@@ -17,33 +17,37 @@ class HabitList extends React.Component {
         };
     }
 
-    renderHabit = ({ item }) => (
-        <View style={styles.iconContainer}>
-            <View style={styles.border}>
-                <Icon
-                    iconStyle={styles.icon}
-                    name={item.icon}
-                    size={Dimensions.get('window').width / 4}
-                    type='font-awesome'
-                    color='#3b6978'
-                    />
-            </View>
-            <Text style={styles.text}>{item.text}</Text>
-        </View>
-    )
-
     render() {
+
+        const { navigate } = this.props.navigation;
+
+        const renderHabit = ({ item }) => (
+            <View style={styles.iconContainer}>
+                <View style={styles.border}>
+                    <Icon
+                        iconStyle={styles.icon}
+                        name={item.icon}
+                        size={Dimensions.get('window').width / 4}
+                        type='font-awesome'
+                        color='#3b6978'
+                        onPress={() => navigate('Categories')}
+                        />
+                </View>
+                <Text style={styles.text}>{item.text}</Text>
+            </View>
+        )
+
         return (
-            <View>
+            <View style={styles.container}>
                 <View style={styles.logo}>
                     <Text style={{color: '#3b6978', marginTop: 20,}}>
                         LOGO
                     </Text>
                 </View>
                 <FlatList
-                    contentContainerStyle={styles.container}
+                    contentContainerStyle={{paddingBottom: '12%'}}
                     data={this.state.habits}
-                    renderItem={this.renderHabit}
+                    renderItem={renderHabit}
                     keyExtractor={item => item.id.toString()}
                     numColumns={2}
                     horizontal={false}
@@ -55,7 +59,8 @@ class HabitList extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
-        paddingBottom: '12%',
+        backgroundColor: '#ffe196',
+        flex: 1,
     },
     iconContainer: {
         marginVertical: 20,
@@ -66,6 +71,7 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     text: {
+        textAlign: 'center',
         margin: 0,
         alignSelf: 'center',
         fontSize: 22,
