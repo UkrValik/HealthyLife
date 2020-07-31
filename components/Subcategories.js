@@ -34,12 +34,17 @@ class Subcategories extends React.Component {
 
     render() {
 
+        const { navigate } = this.props.navigation;
+
         const renderSubcategory = ({ item }) => (
             <ListItem
                 key={item.id}
                 title={item.name}
                 containerStyle={styles.listItem}
                 leftIcon={() => (<Icon name='keyboard-arrow-right' type='material' size={24} />)}
+                onPress={() => navigate('HabitOptionsForm', { name: item.name })}
+                underlayColor='#FFFFEB'
+                activeOpacity={0.5}
                 />
         )
 

@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import HabitList from './HabitList';
 import Categories from './Categories';
 import Subcategories from './Subcategories';
+import HabitOptionsForm from './HabitOptionsForm';
 
 const MainStack = createStackNavigator();
 
@@ -35,6 +36,7 @@ class Main extends React.Component {
                     <MainStack.Screen name='Home' component={HabitList} options={{ title: 'Healthy Life' }}/>
                     <MainStack.Screen name='Categories' component={Categories} options={{title: 'Категории'}}/>
                     <MainStack.Screen name='Subcategories' component={Subcategories} />
+                    <MainStack.Screen name='HabitOptionsForm' component={HabitOptionsForm} />
                 </MainStack.Navigator>
             </NavigationContainer>
         );
