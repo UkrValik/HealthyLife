@@ -1,0 +1,94 @@
+[
+    {
+        "id": 0,
+        "name": "Здоровье",
+        "icon": "heart",
+        "type": "simple-line-icon",
+        "subcategories": [
+            {
+                "id": 0,
+                "name": "Пить воду",
+                "icon": "icon"
+            },
+            {
+                "id": 1,
+                "name": "Здоровая пища",
+                "icon": "icon"
+            },
+            {
+                "id": 2,
+                "name": "Контролировать калории",
+                "icon": "icon"
+            },
+            {
+                "id": 3,
+                "name": "Выпить таблетки",
+                "icon": "icon"
+            },
+            {
+                "id": 4,
+                "name": "Без сахара",
+                "icon": "icon"
+            },
+            {
+                "id": 5,
+                "name": "Без фаст-фуда",
+                "icon": "icon"
+            },
+            {
+                "id": 6,
+                "name": "Без алкоголя",
+                "icon": "icon"
+            },
+            {
+                "id": 7,
+                "name": "Без сладкой воды",
+                "icon": "icon"
+            },
+            {
+                "id": 8,
+                "name": "Не курить",
+                "icon": "icon"
+            },
+            {
+                "id": 9,
+                "name": "Почистить зубы",
+                "icon": "icon"
+            },
+            {
+                "id": 10,
+                "name": "Правильный режим сна",
+                "icon": "icon"
+            },
+            {
+                "id": 11,
+                "name": "Записать свой вес",
+                "icon": "icon"
+            }
+        ]
+    },
+    {
+        "id": 1,
+        "name": "Продуктивность",
+        "icon": "bulb",
+        "type": "simple-line-icon"
+    },
+    {
+        "id": 2,
+        "name": "Развитие",
+        "icon": "book-open",
+        "type": "simple-line-icon"
+    },
+    {
+        "id": 3,
+        "name": "Спорт",
+        "icon": "energy",
+        "type": "simple-line-icon"
+    },
+    {
+        "id": 4,
+        "name": "Учеба",
+        "icon": "graduation",
+        "type": "simple-line-icon"
+    }
+]

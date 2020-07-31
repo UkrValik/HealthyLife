@@ -8,3 +8,11 @@ export default function App() {
     <Main/>
   );
 }
+
+/**
+ * 291000
+ * 67423C
+ * D6AD85
+ * F5E5E0
+ * FFFFEB
+ */

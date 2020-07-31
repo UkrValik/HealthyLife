@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import HabitList from './HabitList';
 import Categories from './Categories';
+import Subcategories from './Subcategories';
 
 const MainStack = createStackNavigator();
 
@@ -12,15 +13,17 @@ class Main extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            categoriesScreenOptions: {
+            homeScreenOptions: {
                 headerStyle: {
-                    backgroundColor: '#84a9ac'
+                    backgroundColor: '#D6AD85',
                 },
-                headerTintColor: '#204051',
+                headerTintColor: '#67423C',
                 headerTitleStyle: {
                     fontSize: 28,
-                    fontFamily: Platform.OS === 'android' ? 'serif' : 'Marker Felt'
-                }
+                    fontFamily: Platform.OS === 'android' ? 'serif' : 'AppleSDGothicNeo-Thin',
+                    fontWeight: '300'
+                },
+                headerBackTitle: 'Назад'
             }
         }
     }
@@ -28,9 +31,10 @@ class Main extends React.Component {
     render() {
         return(
             <NavigationContainer>
-                <MainStack.Navigator initialRouteName='Home' screenOptions={this.state.categoriesScreenOptions}>
-                    <MainStack.Screen name='Home' component={HabitList}/>
+                <MainStack.Navigator initialRouteName='Home' screenOptions={this.state.homeScreenOptions}>
+                    <MainStack.Screen name='Home' component={HabitList} options={{ title: 'Healthy Life' }}/>
                     <MainStack.Screen name='Categories' component={Categories} options={{title: 'Категории'}}/>
+                    <MainStack.Screen name='Subcategories' component={Subcategories} />
                 </MainStack.Navigator>
             </NavigationContainer>
         );
