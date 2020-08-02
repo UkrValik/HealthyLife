@@ -1,6 +1,7 @@
 import React from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, FlatList, Dimensions, Switch } from 'react-native';
-import { Icon, Input, CheckBox } from 'react-native-elements';
+import { Text, View, StyleSheet, TouchableOpacity, FlatList, Dimensions, Switch, ScrollView } from 'react-native';
+import { Icon, Input, CheckBox, ListItem, Button } from 'react-native-elements';
+import TimePicker from 'react-native-simple-time-picker';
 
 class HabitOptionsForm extends React.Component {
 
@@ -11,7 +12,16 @@ class HabitOptionsForm extends React.Component {
             goal: '1',
             checkBoxes: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'],
             checkBoxesOn: [],
-            switch: false,
+            switchDays: false,
+            switchNotification: true,
+            notificationTime: [
+                {
+                    visible: 'none',
+                    time: '6:00',
+                    id: 0,
+                    enabled: true,
+                },
+            ],
         }
     }
 
@@ -39,18 +49,72 @@ class HabitOptionsForm extends React.Component {
                 if (i !== item) newArr.push(i);
             });
             this.setState({ checkBoxesOn: newArr });
+            this.setState({ switchDays: false });
         } else {
             this.setState({ checkBoxesOn: [...this.state.checkBoxesOn, item] });
         }
     }
 
-    toggleSwitch = (value) => {
-        this.setState({ switch: value });
-        if (value) {
-            this.setState({ checkBoxesOn: this.state.checkBoxes });
-        } else {
+    toggleSwitchDays = (value) => {
+        if (this.state.checkBoxesOn.length === 7 && !value) {
             this.setState({ checkBoxesOn: [] });
+        } else {
+            this.setState({ checkBoxesOn: this.state.checkBoxes });
         }
+        this.setState({ switchDays: value });
+    }
+
+    toggleSwitchNotification = (value) => {
+        let newNotificationTime = this.state.notificationTime;
+        newNotificationTime = newNotificationTime.map(i => ({
+            time: i.time,
+            id: i.id,
+            visible: 'none',
+            enabled: !i.enabled,
+        }));
+        this.setState({ notificationTime: newNotificationTime });
+        this.setState({ switchNotification: value });
+    }
+
+    showTimePicker = (item) => {
+        if (item.enabled) {
+            let newNotificationTime = this.state.notificationTime;
+            newNotificationTime = newNotificationTime.map(i => i.visible === 'flex' ? {
+                time: i.time,
+                id: i.id,
+                visible: 'none',
+                enabled: item.enabled,
+            } : i);
+            newNotificationTime = newNotificationTime.map(i => i.id === item.id ? {
+                time: item.time,
+                id: item.id,
+                visible: item.visible === 'flex' ? 'none' : 'flex',
+                enabled: item.enabled,
+            } : i);
+            this.setState({ notificationTime: newNotificationTime });
+        }
+    }
+
+    handleTime = (hours, minutes, item) => {
+        let newNotificationTime = this.state.notificationTime;
+        newNotificationTime = newNotificationTime.map(i => i.id === item.id ? {
+            id: item.id,
+            time: hours.toString() + ':' + minutes.toString(),
+            visible: item.visible,
+            enabled: item.enabled,
+        } : i);
+        this.setState({ notificationTime: newNotificationTime });
+    }
+
+    addNotificationTime = () => {
+        let newNotificationTime = this.state.notificationTime;
+        newNotificationTime.push({
+            time: '6:00',
+            id: newNotificationTime.length,
+            enabled: newNotificationTime[0].enabled,
+            visible: 'none',
+        });
+        this.setState({ notificationTime: newNotificationTime });
     }
 
     render() {
@@ -60,7 +124,10 @@ class HabitOptionsForm extends React.Component {
                 styles.inputCheckBoxContainerStyle1 : 
                 styles.inputCheckBoxContainerStyle2;
             return (
-                <TouchableOpacity key={item} style={inputCheckBoxContainerStyle} onPress={() => this.toggleCheckBox(item)}>
+                <TouchableOpacity 
+                    key={item} 
+                    style={inputCheckBoxContainerStyle} 
+                    onPress={() => this.toggleCheckBox(item)}>
                     <Text style={styles.inputCheckBoxStyle}>
                         {item}
                     </Text>
@@ -77,14 +144,15 @@ class HabitOptionsForm extends React.Component {
         )
 
         const ItemListFooterComponent = () => (
-            <View style={{marginTop: '2%', flexDirection: 'row', justifyContent: 'flex-end'}}>
-                <Text style={{fontSize: 16, textAlignVertical: 'center', color: '#291000'}}>
-                    Каждый день:
-                </Text>
+            <View style={styles.switchContainer}>
+                <View style={{justifyContent: 'center'}}>
+                    <Text style={styles.switchText}>
+                        Каждый день:
+                    </Text>
+                </View>
                 <Switch
-                    style={{}}
-                    value={this.state.switch}
-                    onValueChange={(value) => this.toggleSwitch(value)}
+                    value={this.state.switchDays}
+                    onValueChange={(value) => this.toggleSwitchDays(value)}
                     thumbColor='#291000'
                     ios_backgroundColor='#F5E5E0'
                     trackColor={{
@@ -95,8 +163,56 @@ class HabitOptionsForm extends React.Component {
             </View>
         )
 
+        const renderNotificationTime = ({ item }) => {
+            const hours = Number.parseInt(item.time.split(':')[0]);
+            const minutes = Number.parseInt(item.time.split(':')[1]);
+            const color = item.enabled ? '#291000' : '#F5E5E0';
+            return (
+                <View key={item.id} style={{marginVertical: '0%'}}>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                        <Text style={{fontSize: 20, color: color, paddingLeft: '3%', fontWeight: '300', paddingVertical: 10}}>
+                            Время
+                        </Text>
+                        <Text onPress={() => this.showTimePicker(item)} style={{fontSize: 20, color: color, marginRight: '3%', fontWeight: '300', paddingVertical: 10, paddingHorizontal: 10}}>
+                            {item.time}
+                        </Text>
+                    </View>
+                    <View style={{display: item.visible}}>
+                        <TimePicker 
+                            selectedHours={hours}
+                            selectedMinutes={minutes}
+                            onChange={(h, m) => this.handleTime(h, m, item)}
+                            />
+                    </View>
+                </View>
+            );
+        }
+
+        const NotificationFotterComponent = () => {
+            return (
+                <Button
+                    title='Добавить еще'
+                    onPress={() => this.addNotificationTime()}
+                    containerStyle={{width: 90, alignSelf: 'flex-start'}}
+                    buttonStyle={{backgroundColor: '#FFFFEB'}}
+                    titleStyle={{color: '#291000'}}
+                    />
+            );
+        }
+
+        const NotificationSeparatorComponent = () => {
+            return(
+                <View
+                    style={{
+                        borderBottomWidth: 1,
+                        borderColor: '#F5E5E0',
+                    }}
+                    />
+            );
+        }
+
         return(
-            <View style={styles.container}>
+            <ScrollView style={styles.container}>
                 <Input
                     label='Название'
                     labelStyle={{color: '#67423C'}}
@@ -115,7 +231,7 @@ class HabitOptionsForm extends React.Component {
                     containerStyle={{height: 70}}
                     inputContainerStyle={{borderColor: '#291000'}}
                     />
-                <View style={{flex: 1}}>
+                <View style={{width: '95%', alignSelf: 'center', borderBottomWidth: 1, paddingBottom: '2%'}}>
                     <FlatList
                         data={this.state.checkBoxes}
                         renderItem={renderCheckBoxes}
@@ -127,7 +243,34 @@ class HabitOptionsForm extends React.Component {
                         ListFooterComponent={ItemListFooterComponent}
                         />
                 </View>
-            </View>
+                <View style={styles.notificationContainer}>
+                    <View style={{justifyContent: 'center'}}>
+                        <Text style={styles.notificationText}>
+                            Оповещения
+                        </Text>
+                    </View>
+                    <Switch
+                        value={this.state.switchNotification}
+                        onValueChange={(value) => this.toggleSwitchNotification(value)}
+                        ios_backgroundColor='#F5E5E0'
+                        thumbColor='#291000'
+                        trackColor={{
+                            'false': '#F5E5E0',
+                            'true': '#D6AD85'
+                        }}
+                        />
+                </View>
+                <View>
+                    <FlatList
+                        data={this.state.notificationTime}
+                        renderItem={renderNotificationTime}
+                        keyExtractor={item => item.id.toString()}
+                        scrollEnabled={false}
+                        ItemSeparatorComponent={NotificationSeparatorComponent}
+                        ListFooterComponent={NotificationFotterComponent}
+                        />
+                </View>
+            </ScrollView>
         );
     }
 }
@@ -152,7 +295,7 @@ const styles = StyleSheet.create({
         height: Dimensions.get('screen').width * 0.1,
         width: Dimensions.get('screen').width * 0.1,
         justifyContent: 'center',
-        backgroundColor: '#67423C'
+        backgroundColor: '#67423C',
     },
     inputCheckBoxContainerStyle2: {
         alignItems: 'center',
@@ -171,7 +314,7 @@ const styles = StyleSheet.create({
     inputCheckBoxHeaderStyle: {
         color: '#67423C',
         fontWeight: 'bold',
-        marginLeft: '1%',
+        marginLeft: '0.5%',
         fontSize: 16,
         marginBottom: '3%',
     },
@@ -181,6 +324,29 @@ const styles = StyleSheet.create({
         color: '#67423C',
         fontSize: 21,
         fontWeight: '400',
+    },
+    switchContainer: {
+        marginTop: '2%',
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+    },
+    switchText: {
+        fontSize: 16,
+        textAlignVertical: 'center',
+        color: '#291000',
+    },
+    notificationContainer: {
+        marginTop: '2%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingRight: '2%',
+    },
+    notificationText: {
+        color: '#67423C',
+        fontWeight: 'bold',
+        fontSize: 16,
+        marginBottom: '3%',
+        paddingLeft: '3%',
     }
 });
 
